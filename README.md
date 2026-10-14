@@ -41,3 +41,9 @@ The system is structured as four cooperating autonomous agents:
 • Processed 2.1M+ records across 248 stations (UrbanEV/ACN) on a 5-min grid, engineering lag & load metrics.
 • Simulated dynamic pricing policies, achieving a 15.6% operator revenue lift and 21.4% peak load shaving.
 ```
+
+## Project materials
+
+- [Final presentation (PDF)](final_presentation.pdf)
+- [Editable presentation (PPTX)](final_presentation.pptx)
+
