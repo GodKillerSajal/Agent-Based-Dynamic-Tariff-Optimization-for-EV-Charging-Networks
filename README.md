@@ -42,8 +42,22 @@ The system is structured as four cooperating autonomous agents:
 • Simulated dynamic pricing policies, achieving a 15.6% operator revenue lift and 21.4% peak load shaving.
 ```
 
-## Project materials
+## LangGraph working copy and measured evaluation
 
-- [Final presentation (PDF)](final_presentation.pdf)
-- [Editable presentation (PPTX)](final_presentation.pptx)
+The workspace copy adds `ev_langgraph.py`, which wires the forecasting, station congestion proxy, pricing policy, and evaluation into a deterministic LangGraph state machine. The graph uses the available UrbanEV CSVs; it does not claim that the 2026 resume scenario figures are causal results.
 
+Run from the `portfolio_projects` root after installing its shared environment:
+
+```powershell
+portfolio_projects\.venv\Scripts\python.exe portfolio_projects\expanded\ev-dynamic-tariff-langgraph\run_ev_eval.py
+```
+
+The run uses a chronological 70/15/15 split. The feature builder only uses values through the previous five-minute interval; the model is compared with a previous-day seasonal-naive forecast. MLflow records forecast and scenario metrics in `outputs/mlflow.db`, and the fitted forecaster is saved under `outputs/`.
+
+### Measured working-copy evaluation
+
+On the held-out final 15% of the available UrbanEV time window (1,253 five-minute intervals), the lagged HistGradientBoosting forecaster achieved **MAE 156.97** and **RMSE 239.86**, versus **MAE 497.76** and **RMSE 721.42** for the previous-day seasonal-naive baseline. The next-interval congestion proxy reached **0.999 precision, 0.202 recall, and 0.337 F1** against the train-only station occupancy p90 label. Its high precision comes with low recall, so this is not a reliable operational alert model yet.
+
+Pricing scenarios estimated revenue changes of **+0.77%, +0.46%, and +0.15%** under assumed elasticities of -0.2, -0.5, and -0.8. These are counterfactual calculations, not observed revenue or causal effects. Existing resume figures (15.6% revenue lift and 21.4% peak-load shaving) are separate modeled results from the original project material and were not reproduced by this evaluation.
+
+The UrbanEV files do not provide station capacities, queue labels, or observed responses to price changes, so the congestion score is a percentile proxy and the revenue/load changes are not causal estimates. Full metric details are in `outputs/evaluation.json`.
